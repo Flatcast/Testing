@@ -22,4 +22,8 @@ public class Praktikum {
         }
     }
 }
+class MetalBand{
+    short year;
+    String name;
+}
 
