@@ -1,29 +1,39 @@
 package Part1;
 
-import java.util.ArrayList;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 
 
 public class Praktikum {
     public static void main(String[] args) {
-        ArrayList<Double> expenses = new ArrayList<>();
-        expenses.add(190.23);
-        expenses.add(290.32);
-        expenses.add(420.03);
-        if(expenses.isEmpty()){
-            System.out.println("Нет сохраненных трат");
-        }else{
-            System.out.println("Трат в списке - "+ expenses.size());
-        }
-        if(expenses.contains(120.23)==false){
-            expenses.add(120.23);
+        String path = "";
+        for (int i = 1; i <= 3; i++) {
+            path = "C:\\Users\\gavrilov.DE\\IdeaProjects\\Testing\\src\\Part1\\m.2023.0" + i + ".csv";
 
-        }else{
-            System.out.println("Все расходы учтены");
+            String fileContent = readFile(path);
+            assert fileContent != null;
+            String[] lines = fileContent.split("\\r\\n");
+            for (int j = 0; j < lines.length; j++) {
+                String[] linesOut = lines[j].split(",");
+                System.out.println(Arrays.toString(linesOut));
+            }
+            System.out.println(Arrays.toString(lines));
         }
     }
-}
-class MetalBand{
-    short year;
-    String name;
-}
+        public static String readFile (String path){
+            try {
+                return Files.readString(Path.of(path));
+            } catch (IOException e) {
+                System.out.println("No file");
+                return null;
+            }
+        }
+    }
+
+
+
 
