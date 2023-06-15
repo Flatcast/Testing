@@ -21,7 +21,6 @@ public class Praktikum {
                 String[] linesOut = lines[j].split(",");
                 System.out.println(Arrays.toString(linesOut));
             }
-            System.out.println(Arrays.toString(lines));
         }
     }
         public static String readFile (String path){
