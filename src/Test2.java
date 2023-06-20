@@ -3,13 +3,15 @@ import java.util.Scanner;
 
 public class Test2 {
     public static void main(String[] args) {
-       Scanner scanner = new Scanner(System.in);
-        String firstName = scanner.next();
-        String lastName = scanner.next();
-        scanner.close();
-        System.out.println(createFullName(firstName,lastName));
-    }
-    public static String createFullName(String firstName,String lastName){
-        return firstName+" "+lastName;
+
+
+        System.out.println();
+        int rows = 7;
+        int rowBusy = 2;
+        if (rows %2==0){
+            System.out.println(((rows / 2) < rowBusy) ? "Ticket price: $10" : "Ticket price: $8");
+        }else
+        System.out.println((((rows -1)/ 2) < rowBusy) ? "Ticket price: $10" : "Ticket price: $8");
+
     }
 }
