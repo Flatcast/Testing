@@ -1,0 +1,74 @@
+import datetime
+import googleapiclient.discovery
+import discord
+from oauth2client.service_account import ServiceAccountCredentials
+import logging
+
+# Настройка логирования
+logging.basicConfig(level=logging.INFO)
+
+# Функция для получения событий, содержащих "День" и "рождения", и их дат
+def get_birthday_events():
+    try:
+        # Авторизация и настройка сервиса
+        credentials = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scopes=['https://www.googleapis.com/auth/calendar.readonly'])
+        service = googleapiclient.discovery.build('calendar', 'v3', credentials=credentials)
+
+        # Получение текущей даты и даты конца недели
+        now = datetime.datetime.utcnow().isoformat() + 'Z'
+        end_of_week = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'
+
+        # Получение событий
+        events_result = service.events().list(calendarId='1984vgl@gmail.com', timeMin=now, timeMax=end_of_week, singleEvents=True, orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        birthday_events = []
+        for event in events:
+            if 'день' in event['summary'].lower() and 'рождения' in event['summary'].lower():
+                # Проверяем, есть ли дата начала в формате dateTime
+                if 'dateTime' in event['start']:
+                    event_date = event['start']['dateTime']
+                # Если нет dateTime, проверяем наличие date
+                elif 'date' in event['start']:
+                    event_date = event['start']['date']
+                else:
+                    # Если нет ни dateTime, ни date, пропускаем событие
+                    continue
+
+                birthday_events.append((event['summary'], event_date))
+
+        return birthday_events
+    except Exception as e:
+        logging.error(f"Ошибка при получении событий: {e}")
+        return []
+
+# Функция для отправки сообщения в Discord
+async def send_message_to_discord(client, message):
+    channel = client.get_channel(1174627440698601495) # ID канала
+    await channel.send(message)
+
+# Намерения для клиента Discord
+intents = discord.Intents.default()
+intents.messages = True
+intents.guilds = True
+
+# Создание клиента Discord
+client = discord.Client(intents=intents)
+
+@client.event
+async def on_ready():
+    logging.info(f'Logged in as {client.user}')
+    birthday_events = get_birthday_events()
+    if birthday_events:
+        for event_name, event_date in birthday_events:
+            await send_message_to_discord(client, f"Предстоящее событие: {event_name} на {event_date}")
+    else:
+        await send_message_to_discord(client, "Нет событий на этой неделе, содержащих 'День рождения'")
+    await client.close()
+
+# Основная функция
+def main():
+    client.run('MTE3NDYyNjgxNjQ1NjEzODgxMg.GvAlgw.jmBk9ZwuH6g5rZEw3a7XkNY3SCj8m1vO_YEgrg')
+
+if __name__ == "__main__":
+    main()
