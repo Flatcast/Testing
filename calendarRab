@@ -68,7 +68,7 @@ async def on_ready():
 
 # Основная функция
 def main():
-    client.run('MTE3NDYyNjgxNjQ1NjEzODgxMg.GvAlgw.jmBk9ZwuH6g5rZEw3a7XkNY3SCj8m1vO_YEgrg')
+    client.run('BotToken')
 
 if __name__ == "__main__":
     main()
